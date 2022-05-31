@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DoctorModelAssembler extends RepresentationModelAssemblerSupport<Doctor, DoctorResponseDTO> {
-    public DoctorModelAssembler(Class<DoctorController> doctorControllerClass, Class<DoctorResponseDTO> resourceType) {
-        super(doctorControllerClass, resourceType);
+    public DoctorModelAssembler() {
+        super(DoctorController.class, DoctorResponseDTO.class);
     }
 
     @Override

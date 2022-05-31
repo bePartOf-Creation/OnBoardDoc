@@ -17,10 +17,11 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
-    @JoinColumn(name = "doctor_id")
-    private Doctor doctor;
     private String homeAddress;
+    
+    @OneToOne
+    @JoinColumn(name = "doctors_id")
+    private Doctor doctor;
 
    
 }
