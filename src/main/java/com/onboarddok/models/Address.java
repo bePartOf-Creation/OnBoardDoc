@@ -1,5 +1,6 @@
 package com.onboarddok.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +19,11 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String homeAddress;
-    
+
     @OneToOne
     @JoinColumn(name = "doctors_id")
+    @JsonBackReference
     private Doctor doctor;
 
-   
+
 }

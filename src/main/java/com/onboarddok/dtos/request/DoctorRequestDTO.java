@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorRequestDTO {
+    
     private String firstName;
     private String lastName;
 

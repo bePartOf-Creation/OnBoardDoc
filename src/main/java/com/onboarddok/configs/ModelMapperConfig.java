@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Claritae Videre Limited
+ * Copyright (C) 2022 Olasunkanmi Olayinka Code
  * All rights reserved
  */
 
@@ -12,16 +12,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModelMapperConfig {
 
-	/**
-	 * Creating a ModelMapper as a Bean.
-	 * @return mapper, an instance of a new mapper
-	 */
-	@Bean
-	public ModelMapper modelMapper() {
-		ModelMapper mapper = new ModelMapper();
-		mapper.getConfiguration().setFieldMatchingEnabled(true);
+    /**
+     * Creating a ModelMapper as a Bean.
+     *
+     * @return mapper, an instance of a new mapper
+     */
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setFieldMatchingEnabled(true);
 
-		mapper.getConfiguration().setSkipNullEnabled(true);
-		return mapper;
-	}
+        mapper.getConfiguration().setSkipNullEnabled(true);
+        return mapper;
+    }
 }

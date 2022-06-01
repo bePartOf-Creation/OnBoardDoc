@@ -1,5 +1,6 @@
 package com.onboarddok.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,8 +28,9 @@ public class Doctor {
     @Column(unique = true, nullable = false)
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name="address_id")
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "address_id")
     @EqualsAndHashCode.Exclude
+    @JsonBackReference // To prevent Infinite Recursion.
     private Address addressId;
 }

@@ -26,19 +26,22 @@ class DoctorServiceImplTest {
     }
 
     AddressRequestDTO addressRequestDTO = AddressRequestDTO.builder().homeAddress("1, Sholebo Street, Sabo Yaba").build();
+    AddressRequestDTO addressRequestDTO2 = AddressRequestDTO.builder().homeAddress("101, Olasunkanmi Street, Sabo Yaba").build();
     DoctorRequestDTO doctorRequestDTO = DoctorRequestDTO.builder().firstName("lola").lastName("olasunkami")
-                .emailAddress("lola.ola@gmail.com").phoneNumber("08076004528").addressRequestDTO(addressRequestDTO).build();
+                .emailAddress("lola.ola@gmail.com").phoneNumber("08076004528").addressRequestDTO(addressRequestDTO2).build();
 
     @Test
     void registerDoctor() {
         Doctor newDoctor = this.doctorService.registerDoctor(doctorRequestDTO);
         assertThat(newDoctor.getEmailAddress()).isEqualTo("lola.ola@gmail.com");
+        assertThat(newDoctor.getAddressId().getHomeAddress()).isEqualTo("1, Sholebo Street, Sabo Yaba");
     }
 
     @Test
     void editDoctorAddress() {
-        Doctor newHouseAddress = this.doctorService.editDoctorAddress(addressRequestDTO, 2L);
-        assertThat(newHouseAddress.getAddressId().getHomeAddress()).isEqualTo(addressRequestDTO.getHomeAddress());
+        Doctor existingDoctor = this.doctorService.fetchADoctor(6L);
+        Doctor newHouseAddress = this.doctorService.editDoctorAddress(doctorRequestDTO, existingDoctor.getId());
+        assertThat(newHouseAddress.getAddressId().getHomeAddress()).isEqualTo(addressRequestDTO2.getHomeAddress());
     }
 
     @Test

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface DoctorService {
     Doctor registerDoctor(DoctorRequestDTO doctorRequestDTO);
-    Doctor editDoctorAddress(AddressRequestDTO addressRequestDTO,Long doctorId);
+    Doctor editDoctorAddress(DoctorRequestDTO doctorRequestDTO,Long doctorId);
     Page<Doctor> fetchAllDoctor(int pageNumber, int pageSize);
     Doctor fetchADoctor(Long doctorId);
     void deleteDoctor(Long doctorId);

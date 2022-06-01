@@ -13,9 +13,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
      * @return true or false
      */
     boolean existsDoctorByEmailAddress(String emailAddress);
-    
-   
+
+
     Page<Doctor> findAll(Pageable pageable);
 
-   
+
 }

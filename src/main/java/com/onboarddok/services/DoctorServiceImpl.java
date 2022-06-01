@@ -1,6 +1,5 @@
 package com.onboarddok.services;
 
-import com.onboarddok.dtos.request.AddressRequestDTO;
 import com.onboarddok.dtos.request.DoctorRequestDTO;
 import com.onboarddok.models.Address;
 import com.onboarddok.models.Doctor;
@@ -29,34 +28,52 @@ public class DoctorServiceImpl implements DoctorService {
     @Autowired
     ModelMapper modelMapper;
 
+    /**
+     * This method perform the registration operation.
+     *
+     * @param doctorRequestDTO .
+     * @return the registered doctor.
+     */
     @Override
     public Doctor registerDoctor(DoctorRequestDTO doctorRequestDTO) {
-        try {
-            String duplicateDoctorRecord = checkIfDoctorExists(doctorRequestDTO);
-            log.info("::::Doctor Record Payload is ---> {}", duplicateDoctorRecord);
-        } catch (DataIntegrityViolationException e) {
-            log.debug("::::: Duplicate Found ----> {}", e.getMessage());
-            log.error("::::: Duplicate Found ----> {}", e.getMessage());
+        boolean checkIfDoctorExists = this.doctorRepository.existsDoctorByEmailAddress(doctorRequestDTO.getEmailAddress());
+        if (checkIfDoctorExists) {
+            throw new DataIntegrityViolationException("Duplicate!!!!     Doctor already Exist");
         }
         Doctor newDoctor = createNewDoctor(doctorRequestDTO);
         return this.doctorRepository.save(newDoctor);
     }
 
+    /**
+     * This method performs update Doctor address operation.
+     *
+     * @param doctorRequestDTO .
+     * @param doctorId         .
+     * @return updated doctor with the new Address.
+     */
     @Override
-    public Doctor editDoctorAddress(AddressRequestDTO addressRequestDTO, Long doctorId) {
-        Doctor existingDoctor = this.doctorRepository.findById(doctorId).orElse(null);
+    public Doctor editDoctorAddress(DoctorRequestDTO doctorRequestDTO, Long doctorId) {
+        Doctor existingDoctor = fetchADoctor(doctorId);
         log.info("Current Doctor is ---> {}", existingDoctor);
+        log.info("Existing Doctor Address ---> {}", existingDoctor.getAddressId().getHomeAddress());
 
-        if (existingDoctor == null) {
-            throw new IllegalArgumentException("Doctor Not Found");
-        }
-
-        this.modelMapper.map(addressRequestDTO, existingDoctor.getAddressId());
+        this.modelMapper.map(doctorRequestDTO.getAddressRequestDTO(), existingDoctor.getAddressId());
         Address newAddress = this.addressRepository.save(existingDoctor.getAddressId());
+        log.info("New address is ---> {}", newAddress.getHomeAddress());
+
         existingDoctor.getAddressId().setHomeAddress(newAddress.getHomeAddress());
+        log.info("New Doctor Address ---> {}", existingDoctor.getAddressId().getHomeAddress());
+
         return this.doctorRepository.save(existingDoctor);
     }
 
+    /**
+     * This method performs all doctors operation.
+     *
+     * @param pageNumber .
+     * @param pageSize   .
+     * @return doctors in Pages
+     */
     @Override
     public Page<Doctor> fetchAllDoctor(int pageNumber, int pageSize) {
         log.info(":::PageSize --> {}", pageSize);
@@ -66,37 +83,33 @@ public class DoctorServiceImpl implements DoctorService {
         return this.doctorRepository.findAll(pageable);
     }
 
+    /**
+     * This method perform fetch  a doctor operation.
+     *
+     * @param doctorId .
+     * @return a doctor .
+     */
     @Override
     public Doctor fetchADoctor(Long doctorId) {
         Doctor existingDoctor = this.doctorRepository.findById(doctorId).orElse(null);
+        if (existingDoctor == null) {
+            throw new IllegalArgumentException("Doctor Not Found");
+        }
         log.info("Current Doctor is ---> {}", existingDoctor);
         return existingDoctor;
     }
 
+    /**
+     * This method perform delete operation.
+     *
+     * @param doctorId .
+     */
     @Override
     public void deleteDoctor(Long doctorId) {
-        Doctor existingDoctor = this.doctorRepository.findById(doctorId).orElse(null);
+        Doctor existingDoctor = fetchADoctor(doctorId);
         log.info("Current Doctor is ---> {}", existingDoctor);
 
-        if (existingDoctor == null) {
-            throw new IllegalArgumentException("Doctor Not Found");
-        }
         this.doctorRepository.delete(existingDoctor);
-    }
-
-    /**
-     * Check if doctor exists string.
-     *
-     * @param doctorRequestDTO the doctor request dto
-     * @return the string
-     */
-    public String checkIfDoctorExists(DoctorRequestDTO doctorRequestDTO) {
-        boolean checkIfDoctorExists = this.doctorRepository.existsDoctorByEmailAddress(doctorRequestDTO.getEmailAddress());
-
-        if (checkIfDoctorExists) {
-            throw new DataIntegrityViolationException("Duplicate Doctor with the same Name Cannot be Created");
-        }
-        return "New Doctor Can Be Registered.";
     }
 
     private Doctor createNewDoctor(DoctorRequestDTO doctorRequestDTO) {
@@ -113,6 +126,6 @@ public class DoctorServiceImpl implements DoctorService {
                 .build();
         Address newDoctorHouseAddress = addressRepository.save(houseAddress);
         newDoctor.setAddressId(newDoctorHouseAddress);
-        return doctor;
+        return newDoctor;
     }
 }
